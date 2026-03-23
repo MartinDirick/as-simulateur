@@ -13,9 +13,9 @@ const QUESTIONS = [
     question: 'Combien de personnes travaillent actuellement dans votre entreprise ?',
     options: [
       { label: 'Moins de 10 personnes', score: 0 },
-      { label: 'Entre 10 et 25 personnes', score: 1 },
-      { label: 'Entre 26 et 50 personnes', score: 2 },
-      { label: 'Plus de 50 personnes', score: 3 },
+      { label: 'Entre 10 et 50 personnes', score: 1 },
+      { label: 'Entre 51 et 250 personnes', score: 2 },
+      { label: 'Plus de 250 personnes', score: 3 },
     ],
   },
   {
@@ -38,10 +38,10 @@ const QUESTIONS = [
     blocLabel: 'Croissance & Recrutement',
     question: 'Quel est le rythme de croissance de vos effectifs cette année ?',
     options: [
-      { label: 'Stable — aucune embauche significative prévue', score: 0 },
-      { label: 'Modéré — 1 à 3 recrutements', score: 1 },
-      { label: 'Soutenu — 4 à 10 recrutements', score: 2 },
-      { label: 'Fort — plus de 10 recrutements ou levée de fonds récente', score: 3 },
+      { label: 'Stable/decroissance - aucune embauche significative prévue', score: 0 },
+      { label: 'Modéré — remplacement du turn over + quelques postes clés', score: 1 },
+      { label: 'Soutenu — remplacement du turn over + volet important de nouveaux postes', score: 2 },
+      { label: 'Fort — remplacement du turn over + levée de fonds récente', score: 3 },
     ],
   },
   {
@@ -102,8 +102,8 @@ const QUESTIONS = [
     options: [
       { label: 'Non, ou elles sont gérées par notre expert-comptable', score: 0 },
       { label: 'Des élections CSE à organiser prochainement', score: 1 },
-      { label: 'Un CSE actif avec des sujets courants (BDES, consultations)', score: 2 },
-      { label: 'NAO, accords collectifs, pénibilité ou contentieux social', score: 3 },
+      { label: 'Un CSE actif avec des sujets courants', score: 2 },
+      { label: 'NAO, accords collectifs ou contentieux social', score: 3 },
     ],
   },
 
