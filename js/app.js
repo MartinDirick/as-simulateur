@@ -2,6 +2,11 @@
 // APP — Gestion d'état et rendu de l'interface
 // ============================================================
 
+// ── Configuration ─────────────────────────────────────────────
+// MODIFIER : Remplacez par l'URL de votre Google Apps Script déployé
+// (voir fichier google-apps-script.js pour les instructions)
+const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbweFDAmskHxvQ4OmUivXO0puCm3ydd6JKt6vCu7ZQ7xjpQhU36ygM4tVTUIutaIJ4PApQ/exec';
+
 // ── État global ───────────────────────────────────────────────
 const state = {
   screen: 'intro',       // 'intro' | 'question' | 'results'
@@ -77,7 +82,7 @@ function renderIntro() {
           <span class="btn-arrow">→</span>
         </button>
 
-        <p class="intro-note">Aucune donnée collectée · Résultat instantané</p>
+        <p class="intro-note">Résultat instantané · Email optionnel à la fin pour recevoir une ressource</p>
       </div>
     </div>
   `;
@@ -250,6 +255,9 @@ function renderResults(results) {
 
       </div>
 
+      <!-- Capture email / ressource -->
+      ${renderLeadForm()}
+
       <!-- CTA Ability Shared -->
       ${renderCTA(recommendation)}
 
@@ -259,6 +267,121 @@ function renderResults(results) {
 
     </div>
   `;
+}
+
+// ── Formulaire de capture de lead ─────────────────────────────
+function renderLeadForm() {
+  return `
+    <div class="lead-form-block" id="lead-form-block">
+      <div class="lead-form-header">
+        <div class="lead-form-icon">◈</div>
+        <div>
+          <div class="lead-form-eyebrow">Ressource gratuite</div>
+          <h3 class="lead-form-title">Recevez [NOM DE LA RESSOURCE] — à compléter</h3>
+          <p class="lead-form-desc">
+            Un document pratique pour structurer votre RH, adapté au profil de votre entreprise.
+          </p>
+        </div>
+      </div>
+      <form class="lead-form" id="lead-capture-form" novalidate>
+        <div class="lead-form-fields">
+          <input
+            type="text"
+            id="lead-prenom"
+            name="prenom"
+            placeholder="Votre prénom"
+            class="lead-input"
+            autocomplete="given-name"
+          >
+          <input
+            type="email"
+            id="lead-email"
+            name="email"
+            placeholder="Votre email professionnel"
+            class="lead-input"
+            autocomplete="email"
+            required
+          >
+          <button type="submit" class="btn btn-primary lead-submit-btn" id="lead-submit-btn">
+            Recevoir la ressource <span class="btn-arrow">→</span>
+          </button>
+        </div>
+        <p class="lead-privacy">Vos données ne sont utilisées que pour vous envoyer la ressource. Pas de spam.</p>
+      </form>
+    </div>
+  `;
+}
+
+function renderLeadFormSuccess() {
+  return `
+    <div class="lead-form-block lead-form-block--success" id="lead-form-block">
+      <div class="lead-success">
+        <div class="lead-success-icon">✓</div>
+        <div>
+          <div class="lead-success-title">C'est dans votre boîte !</div>
+          <div class="lead-success-desc">Vérifiez votre email dans quelques minutes (pensez aux spams si besoin).</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function handleLeadSubmit() {
+  const email  = document.getElementById('lead-email')?.value?.trim();
+  const prenom = document.getElementById('lead-prenom')?.value?.trim();
+
+  // Validation email basique
+  if (!email || !email.includes('@')) {
+    const emailInput = document.getElementById('lead-email');
+    if (emailInput) {
+      emailInput.classList.add('input-error');
+      emailInput.focus();
+    }
+    return;
+  }
+
+  const submitBtn = document.getElementById('lead-submit-btn');
+  if (submitBtn) {
+    submitBtn.classList.add('loading');
+    submitBtn.innerHTML = 'Envoi en cours…';
+  }
+
+  const results     = calculateResults(state.answers);
+  const answersMap  = Object.fromEntries(state.answers.map(a => [a.questionId, a.optionLabel]));
+
+  const params = new URLSearchParams({
+    date:          new Date().toLocaleString('fr-FR'),
+    prenom:        prenom || '',
+    email,
+    score:         String(results.totalScore),
+    scoreMax:      String(results.maxScore),
+    recommandation: results.recommendation.title,
+    effectifs:     answersMap.headcount   || '',
+    structure:     answersMap.structure   || '',
+    croissance:    answersMap.growth      || '',
+    recrutements:  answersMap.hiring      || '',
+    contexte:      answersMap.context     || '',
+    signauxRH:     answersMap.hr_signals  || '',
+    gestionRH:     answersMap.current_hr  || '',
+    obligations:   answersMap.legal       || '',
+    processus:     answersMap.processes   || '',
+    management:    answersMap.management  || '',
+  });
+
+  try {
+    await fetch(GOOGLE_SHEET_URL, {
+      method: 'POST',
+      mode:   'no-cors',
+      body:   params,
+    });
+  } catch (err) {
+    // no-cors ne permet pas de lire la réponse — on affiche le succès quand même
+    console.error('Erreur envoi:', err);
+  }
+
+  // Remplacer le formulaire par le message de succès
+  const block = document.getElementById('lead-form-block');
+  if (block) block.outerHTML = renderLeadFormSuccess();
 }
 
 // ── Bloc CTA Ability Shared ───────────────────────────────────
@@ -307,6 +430,17 @@ function attachEventListeners() {
 
   document.querySelectorAll('.option-card').forEach(card => {
     card.addEventListener('click', () => selectOption(parseInt(card.dataset.index)));
+  });
+
+  // Formulaire de capture de lead
+  document.getElementById('lead-capture-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    handleLeadSubmit();
+  });
+
+  // Réinitialise la classe d'erreur à la saisie
+  document.getElementById('lead-email')?.addEventListener('input', (e) => {
+    e.target.classList.remove('input-error');
   });
 }
 
