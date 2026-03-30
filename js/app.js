@@ -275,7 +275,7 @@ function renderLeadForm() {
     <div class="lead-form-block" id="lead-form-block">
       <div class="lead-form-left">
         <div class="lead-form-eyebrow">Ressource gratuite</div>
-        <h3 class="lead-form-title">Recevez le guide Ability SHared pour structurer vos RH</h3>
+        <h3 class="lead-form-title">Recevez le guide Ability Shared pour structurer vos RH</h3>
         <p class="lead-form-desc">Un guide pratique basé sur 25ans d'expérience pour structurer vos RH, adapté au profil de votre entreprise.</p>
       </div>
       <form class="lead-form" id="lead-capture-form" novalidate>
@@ -305,7 +305,7 @@ function renderLeadFormSuccess() {
       <div class="lead-success">
         <div class="lead-success-icon">✓</div>
         <div>
-          <div class="lead-success-title">C'est dans votre boîte !</div>
+          <div class="lead-success-title">Le guide est en route !</div>
           <div class="lead-success-desc">Vérifiez votre email dans quelques minutes (pensez aux spams si besoin).</div>
         </div>
       </div>
