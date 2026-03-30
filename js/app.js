@@ -82,7 +82,7 @@ function renderIntro() {
           <span class="btn-arrow">→</span>
         </button>
 
-        <p class="intro-note">Résultat instantané · Email optionnel à la fin pour recevoir une ressource</p>
+        <p class="intro-note">Résultat instantané</p>
       </div>
     </div>
   `;
@@ -275,8 +275,8 @@ function renderLeadForm() {
     <div class="lead-form-block" id="lead-form-block">
       <div class="lead-form-left">
         <div class="lead-form-eyebrow">Ressource gratuite</div>
-        <h3 class="lead-form-title">Recevez [NOM DE LA RESSOURCE]</h3>
-        <p class="lead-form-desc">Un guide pratique pour structurer votre RH, adapté au profil de votre entreprise.</p>
+        <h3 class="lead-form-title">Recevez le guide Ability Shared pour structurer vos RH</h3>
+        <p class="lead-form-desc">Un guide pratique pour structurer vos RH, adapté au profil de votre entreprise.</p>
       </div>
       <form class="lead-form" id="lead-capture-form" novalidate>
         <div class="lead-form-fields">
@@ -374,7 +374,7 @@ async function handleLeadSubmit() {
 function renderCTA(recommendation) {
   const headlines = {
     office_manager: 'Votre prochaine étape, anticipée au bon moment.',
-    hr_shared:      'C\'est exactement ce que nous faisons.',
+    hr_shared:      'Le renfort RH stratégique et opérationnel des dirigeants et des DRH.',
     hr_fulltime:    'Nous pouvons vous accompagner dans cette transition.',
   };
 
@@ -387,8 +387,8 @@ function renderCTA(recommendation) {
           <div class="cta-block-eyebrow">Ability Shared</div>
           <h3 class="cta-block-title">${headline}</h3>
           <p class="cta-block-desc">
-            Ability Shared accompagne les entreprises en croissance avec des solutions
-            de RH à temps partagé — une expertise RH senior, activée au bon moment,
+            Ability Shared accompagne les CEO et DRH pour co-construire les décisions humaines structurantes 
+            puis en piloter l'exécution, pour transformer les enjeux RH en levier business
             sans les contraintes d'un poste à temps plein.
           </p>
         </div>
