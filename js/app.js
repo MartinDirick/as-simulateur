@@ -273,26 +273,13 @@ function renderResults(results) {
 function renderLeadForm() {
   return `
     <div class="lead-form-block" id="lead-form-block">
-      <div class="lead-form-header">
-        <div class="lead-form-icon">◈</div>
-        <div>
-          <div class="lead-form-eyebrow">Ressource gratuite</div>
-          <h3 class="lead-form-title">Recevez [NOM DE LA RESSOURCE] — à compléter</h3>
-          <p class="lead-form-desc">
-            Un document pratique pour structurer votre RH, adapté au profil de votre entreprise.
-          </p>
-        </div>
+      <div class="lead-form-left">
+        <div class="lead-form-eyebrow">Ressource gratuite</div>
+        <h3 class="lead-form-title">Recevez [NOM DE LA RESSOURCE]</h3>
+        <p class="lead-form-desc">Un guide pratique pour structurer votre RH, adapté au profil de votre entreprise.</p>
       </div>
       <form class="lead-form" id="lead-capture-form" novalidate>
         <div class="lead-form-fields">
-          <input
-            type="text"
-            id="lead-prenom"
-            name="prenom"
-            placeholder="Votre prénom"
-            class="lead-input"
-            autocomplete="given-name"
-          >
           <input
             type="email"
             id="lead-email"
@@ -302,11 +289,11 @@ function renderLeadForm() {
             autocomplete="email"
             required
           >
-          <button type="submit" class="btn btn-primary lead-submit-btn" id="lead-submit-btn">
-            Recevoir la ressource <span class="btn-arrow">→</span>
+          <button type="submit" class="lead-submit-btn" id="lead-submit-btn">
+            Recevoir <span class="lead-btn-arrow">→</span>
           </button>
         </div>
-        <p class="lead-privacy">Vos données ne sont utilisées que pour vous envoyer la ressource. Pas de spam.</p>
+        <p class="lead-privacy">Pas de spam. Vos données restent confidentielles.</p>
       </form>
     </div>
   `;
@@ -327,8 +314,7 @@ function renderLeadFormSuccess() {
 }
 
 async function handleLeadSubmit() {
-  const email  = document.getElementById('lead-email')?.value?.trim();
-  const prenom = document.getElementById('lead-prenom')?.value?.trim();
+  const email = document.getElementById('lead-email')?.value?.trim();
 
   // Validation email basique
   if (!email || !email.includes('@')) {
@@ -343,7 +329,7 @@ async function handleLeadSubmit() {
   const submitBtn = document.getElementById('lead-submit-btn');
   if (submitBtn) {
     submitBtn.classList.add('loading');
-    submitBtn.innerHTML = 'Envoi en cours…';
+    submitBtn.innerHTML = 'Envoi…';
   }
 
   const results     = calculateResults(state.answers);
@@ -351,7 +337,7 @@ async function handleLeadSubmit() {
 
   const params = new URLSearchParams({
     date:          new Date().toLocaleString('fr-FR'),
-    prenom:        prenom || '',
+    prenom:        '',
     email,
     score:         String(results.totalScore),
     scoreMax:      String(results.maxScore),
@@ -439,8 +425,8 @@ function attachEventListeners() {
   });
 
   // Réinitialise la classe d'erreur à la saisie
-  document.getElementById('lead-email')?.addEventListener('input', (e) => {
-    e.target.classList.remove('input-error');
+  document.getElementById('lead-email')?.addEventListener('input', function() {
+    this.classList.remove('input-error');
   });
 }
 
