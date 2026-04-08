@@ -1,24 +1,20 @@
 // ============================================================
 // APP — Gestion d'état et rendu de l'interface
 // ============================================================
-
 // ── Configuration ─────────────────────────────────────────────
 // MODIFIER : Remplacez par l'URL de votre Google Apps Script déployé
 // (voir fichier google-apps-script.js pour les instructions)
 const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbweFDAmskHxvQ4OmUivXO0puCm3ydd6JKt6vCu7ZQ7xjpQhU36ygM4tVTUIutaIJ4PApQ/exec';
-
 // ── État global ───────────────────────────────────────────────
 const state = {
   screen: 'intro',       // 'intro' | 'question' | 'results'
   currentQuestion: 0,
   answers: [],           // [{ questionId, optionIndex, optionLabel, score }]
 };
-
 // ── Rendu principal ───────────────────────────────────────────
 function render() {
   const app = document.getElementById('app');
   document.body.className = state.screen; // pour les styles par écran
-
   if (state.screen === 'intro') {
     app.innerHTML = renderIntro();
   } else if (state.screen === 'question') {
@@ -36,10 +32,8 @@ function render() {
       if (screen) screen.classList.add('visible');
     });
   }
-
   attachEventListeners();
 }
-
 // ── Écran d'introduction ──────────────────────────────────────
 function renderIntro() {
   return `
@@ -54,7 +48,6 @@ function renderIntro() {
           Répondez à 10 questions et obtenez un diagnostic personnalisé avec une recommandation claire,
           les signaux qui l'ont motivée, et vos prochaines étapes concrètes.
         </p>
-
         <div class="profiles-preview">
           <div class="profile-chip profile-chip--green">
             <span class="chip-dot"></span>Office Manager
@@ -68,7 +61,6 @@ function renderIntro() {
             <span class="chip-dot"></span>RH à temps plein
           </div>
         </div>
-
         <div class="intro-meta">
           <span class="meta-item"><span class="meta-icon">◷</span> 3 minutes</span>
           <span class="meta-sep">·</span>
@@ -76,18 +68,15 @@ function renderIntro() {
           <span class="meta-sep">·</span>
           <span class="meta-item"><span class="meta-icon">◎</span> 3 profils analysés</span>
         </div>
-
         <button class="btn btn-primary btn-large" id="start-btn">
           Démarrer le diagnostic
           <span class="btn-arrow">→</span>
         </button>
-
         <p class="intro-note">Résultat instantané</p>
       </div>
     </div>
   `;
 }
-
 // ── Écran de question ─────────────────────────────────────────
 function renderQuestion() {
   const q = QUESTIONS[state.currentQuestion];
@@ -95,10 +84,8 @@ function renderQuestion() {
   const currentAnswer = state.answers[state.currentQuestion];
   const isLast = state.currentQuestion === QUESTIONS.length - 1;
   const hasAnswer = currentAnswer !== undefined;
-
   return `
     <div class="screen question-screen">
-
       <div class="q-top">
         <div class="progress-track">
           <div class="progress-fill" style="width: ${progressPct}%"></div>
@@ -111,7 +98,6 @@ function renderQuestion() {
           <img src="logo ability shared.png" alt="Ability Shared" class="q-logo">
         </div>
       </div>
-
       <div class="q-body">
         <h2 class="q-text">${q.question}</h2>
         <div class="options-list">
@@ -128,7 +114,6 @@ function renderQuestion() {
           `).join('')}
         </div>
       </div>
-
       <div class="q-footer">
         <div class="q-nav">
           ${state.currentQuestion > 0
@@ -144,27 +129,21 @@ function renderQuestion() {
           </button>
         </div>
       </div>
-
     </div>
   `;
 }
-
 // ── Écran de résultats ────────────────────────────────────────
 function renderResults(results) {
   const { recommendation, maturity, signals, diagnosis, nextSteps, totalScore, maxScore } = results;
   const markerPct = Math.min((totalScore / maxScore) * 100, 99);
-
   const signalIconMap = { alert: '◆', warning: '◈', info: '◇' };
   const signalLabelMap = { alert: 'Critique', warning: 'Attention', info: 'À noter' };
-
   return `
     <div class="screen results-screen visible">
-
       <div class="results-topbar">
         <button class="btn btn-ghost btn-sm" id="restart-btn">← Recommencer</button>
         <img src="logo ability shared.png" alt="Ability Shared" class="results-logo">
       </div>
-
       <!-- Recommandation principale -->
       <div class="rec-card rec-card--${recommendation.color}">
         <div class="rec-card-inner">
@@ -177,7 +156,6 @@ function renderResults(results) {
           <span class="rec-score-denom">/${maxScore}</span>
         </div>
       </div>
-
       <!-- Spectre de position -->
       <div class="spectrum-section">
         <div class="spectrum-track">
@@ -195,15 +173,12 @@ function renderResults(results) {
           <span>RH Temps Plein</span>
         </div>
       </div>
-
       <div class="results-grid">
-
         <!-- Diagnostic -->
         <div class="result-card">
           <div class="result-card-label">Diagnostic</div>
           <p class="diagnosis-text">${diagnosis}</p>
         </div>
-
         <!-- Maturité RH -->
         <div class="result-card">
           <div class="result-card-label">Maturité RH actuelle</div>
@@ -229,7 +204,6 @@ function renderResults(results) {
             </div>
           </div>
         </div>
-
         ${signals.length > 0 ? `
         <!-- Signaux -->
         <div class="result-card">
@@ -244,7 +218,6 @@ function renderResults(results) {
           </ul>
         </div>
         ` : ''}
-
         <!-- Prochaines étapes -->
         <div class="result-card">
           <div class="result-card-label">Prochaines étapes recommandées</div>
@@ -252,31 +225,25 @@ function renderResults(results) {
             ${nextSteps.map(step => `<li>${step}</li>`).join('')}
           </ol>
         </div>
-
       </div>
-
       <!-- Capture email / ressource -->
       ${renderLeadForm()}
-
       <!-- CTA Ability Shared -->
       ${renderCTA(recommendation)}
-
       <div class="results-footer">
         <button class="btn btn-ghost btn-sm" id="restart-btn-bottom">Refaire le diagnostic</button>
       </div>
-
     </div>
   `;
 }
-
 // ── Formulaire de capture de lead ─────────────────────────────
 function renderLeadForm() {
   return `
     <div class="lead-form-block" id="lead-form-block">
       <div class="lead-form-left">
-        <div class="lead-form-eyebrow">Ressource gratuite</div>
-        <h3 class="lead-form-title">Recevez le guide Ability Shared pour structurer vos RH</h3>
-        <p class="lead-form-desc">Un guide pratique basé sur 25ans d'expérience pour structurer vos RH, adapté au profil de votre entreprise.</p>
+        <div class="lead-form-eyebrow">Checklist gratuite</div>
+        <h3 class="lead-form-title">Comment bien choisir son RH à temps partagé&nbsp;?</h3>
+        <p class="lead-form-desc">Les bonnes questions à poser, les bons critères et les pièges à éviter.</p>
       </div>
       <form class="lead-form" id="lead-capture-form" novalidate>
         <div class="lead-form-fields">
@@ -298,24 +265,21 @@ function renderLeadForm() {
     </div>
   `;
 }
-
 function renderLeadFormSuccess() {
   return `
     <div class="lead-form-block lead-form-block--success" id="lead-form-block">
       <div class="lead-success">
         <div class="lead-success-icon">✓</div>
         <div>
-          <div class="lead-success-title">Le guide est en route !</div>
+          <div class="lead-success-title">C'est dans votre boîte !</div>
           <div class="lead-success-desc">Vérifiez votre email dans quelques minutes (pensez aux spams si besoin).</div>
         </div>
       </div>
     </div>
   `;
 }
-
 async function handleLeadSubmit() {
   const email = document.getElementById('lead-email')?.value?.trim();
-
   // Validation email basique
   if (!email || !email.includes('@')) {
     const emailInput = document.getElementById('lead-email');
@@ -325,16 +289,13 @@ async function handleLeadSubmit() {
     }
     return;
   }
-
   const submitBtn = document.getElementById('lead-submit-btn');
   if (submitBtn) {
     submitBtn.classList.add('loading');
     submitBtn.innerHTML = 'Envoi…';
   }
-
   const results     = calculateResults(state.answers);
   const answersMap  = Object.fromEntries(state.answers.map(a => [a.questionId, a.optionLabel]));
-
   const params = new URLSearchParams({
     date:          new Date().toLocaleString('fr-FR'),
     prenom:        '',
@@ -353,7 +314,6 @@ async function handleLeadSubmit() {
     processus:     answersMap.processes   || '',
     management:    answersMap.management  || '',
   });
-
   try {
     await fetch(GOOGLE_SHEET_URL, {
       method: 'POST',
@@ -364,12 +324,10 @@ async function handleLeadSubmit() {
     // no-cors ne permet pas de lire la réponse — on affiche le succès quand même
     console.error('Erreur envoi:', err);
   }
-
   // Remplacer le formulaire par le message de succès
   const block = document.getElementById('lead-form-block');
   if (block) block.outerHTML = renderLeadFormSuccess();
 }
-
 // ── Bloc CTA Ability Shared ───────────────────────────────────
 function renderCTA(recommendation) {
   const headlines = {
@@ -377,9 +335,7 @@ function renderCTA(recommendation) {
     hr_shared:      'Le renfort RH stratégique et opérationnel des CEO et DRH.',
     hr_fulltime:    'Nous pouvons vous accompagner dans cette transition.',
   };
-
   const headline = headlines[recommendation.id] || headlines.hr_shared;
-
   return `
     <div class="cta-block">
       <div class="cta-block-inner">
@@ -388,7 +344,7 @@ function renderCTA(recommendation) {
           <h3 class="cta-block-title">${headline}</h3>
           <p class="cta-block-desc">
             Ability Shared accompagne les CEO et DRH pour co-construire les décisions
-            humaines structurantes  puis en piloter l'exécution, pour transformer les
+            humaines structurantes puis en piloter l'exécution, pour transformer les
             enjeux RH en levier business
             sans les contraintes d'un poste à temps plein.
           </p>
@@ -409,7 +365,6 @@ function renderCTA(recommendation) {
     </div>
   `;
 }
-
 // ── Gestion des événements ────────────────────────────────────
 function attachEventListeners() {
   document.getElementById('start-btn')?.addEventListener('click', startQuiz);
@@ -417,23 +372,19 @@ function attachEventListeners() {
   document.getElementById('next-btn')?.addEventListener('click', nextQuestion);
   document.getElementById('restart-btn')?.addEventListener('click', restart);
   document.getElementById('restart-btn-bottom')?.addEventListener('click', restart);
-
   document.querySelectorAll('.option-card').forEach(card => {
     card.addEventListener('click', () => selectOption(parseInt(card.dataset.index)));
   });
-
   // Formulaire de capture de lead
   document.getElementById('lead-capture-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     handleLeadSubmit();
   });
-
   // Réinitialise la classe d'erreur à la saisie
   document.getElementById('lead-email')?.addEventListener('input', function() {
     this.classList.remove('input-error');
   });
 }
-
 // ── Actions ───────────────────────────────────────────────────
 function startQuiz() {
   state.screen = 'question';
@@ -441,7 +392,6 @@ function startQuiz() {
   state.answers = [];
   render();
 }
-
 function selectOption(optionIndex) {
   const q = QUESTIONS[state.currentQuestion];
   state.answers[state.currentQuestion] = {
@@ -452,7 +402,6 @@ function selectOption(optionIndex) {
   };
   render();
 }
-
 function nextQuestion() {
   if (!state.answers[state.currentQuestion]) return;
   if (state.currentQuestion === QUESTIONS.length - 1) {
@@ -463,7 +412,6 @@ function nextQuestion() {
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 function prevQuestion() {
   if (state.currentQuestion > 0) {
     state.currentQuestion--;
@@ -471,7 +419,6 @@ function prevQuestion() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
-
 function restart() {
   state.screen = 'intro';
   state.currentQuestion = 0;
@@ -479,6 +426,5 @@ function restart() {
   render();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
-
 // ── Lancement ─────────────────────────────────────────────────
 render();
