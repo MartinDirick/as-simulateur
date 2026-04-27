@@ -4,7 +4,7 @@
 // ── Configuration ─────────────────────────────────────────────
 // MODIFIER : Remplacez par l'URL de votre Google Apps Script déployé
 // (voir fichier google-apps-script.js pour les instructions)
-const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbweFDAmskHxvQ4OmUivXO0puCm3ydd6JKt6vCu7ZQ7xjpQhU36ygM4tVTUIutaIJ4PApQ/exec';
+const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbyT2xfj87mGJosdhohlZOLc9XGvX3M5BBYsF4kcY0aK5CL4yNNsoGpzllV72LzB71J-YQ/exec';
 // ── État global ───────────────────────────────────────────────
 const state = {
   screen: 'intro',       // 'intro' | 'question' | 'results'
