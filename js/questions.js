@@ -22,7 +22,7 @@ const QUESTIONS = [
     id: 'structure',
     bloc: 'A',
     blocLabel: 'Taille & Structure',
-    question: 'Comment est organisée votre entreprise ?',
+    question: 'Comment votre entreprise est-elle organisée ?',
     options: [
       { label: 'Une seule équipe, peu ou pas de hiérarchie', score: 0 },
       { label: 'Quelques équipes, organisation encore très plate', score: 1 },
