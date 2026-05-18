@@ -378,7 +378,12 @@ function attachEventListeners() {
   // Formulaire de capture de lead
   document.getElementById('lead-capture-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
+    gtag('event', 'email_clicked');
     handleLeadSubmit();
+  });
+  // CTA Ability Shared
+  document.querySelector('.btn-cta')?.addEventListener('click', () => {
+    gtag('event', 'cta_clicked');
   });
   // Réinitialise la classe d'erreur à la saisie
   document.getElementById('lead-email')?.addEventListener('input', function() {
@@ -406,6 +411,7 @@ function nextQuestion() {
   if (!state.answers[state.currentQuestion]) return;
   if (state.currentQuestion === QUESTIONS.length - 1) {
     state.screen = 'results';
+    gtag('event', 'simulation_completed');
   } else {
     state.currentQuestion++;
   }
@@ -425,6 +431,10 @@ function restart() {
   state.answers = [];
   render();
   window.scrollTo({ top: 0, behavior: 'instant' });
+}
+// ── Lancement ─────────────────────────────────────────────────
+gtag('event', 'simulator_opened');
+render();
 }
 // ── Lancement ─────────────────────────────────────────────────
 render();
